@@ -66,11 +66,17 @@ export class ExerciseService {
   }
 
   completeExercise() {
-    this.exercisesHistoryList.push({
+    // this.exercisesHistoryList.push({
+    //   ...this.runningExercise,
+    //   date: new Date(),
+    //   state: "completed"
+    // }); // stroing the completed exercise in the history with date and state
+
+    this.addDataToDatabase({
       ...this.runningExercise,
       date: new Date(),
       state: "completed"
-    }); // stroing the completed exercise in the history with date and state
+    }); // stroing the completed exercise in the firestore database
 
     this.runningExercise = null;
     this.exerciseChanged.next(null); // this means we got no running exercise.
@@ -79,13 +85,21 @@ export class ExerciseService {
   }
 
   cancelExercise(progress: number) {
-    this.exercisesHistoryList.push({
+    // this.exercisesHistoryList.push({
+    //   ...this.runningExercise,
+    //   duration: this.runningExercise.duration * (progress / 100),
+    //   calories: this.runningExercise.calories * (progress / 100),
+    //   date: new Date(),
+    //   state: "cancelled"
+    // }); // stroing the completed exercise in the history with date and state
+
+    this.addDataToDatabase({
       ...this.runningExercise,
       duration: this.runningExercise.duration * (progress / 100),
       calories: this.runningExercise.calories * (progress / 100),
       date: new Date(),
       state: "cancelled"
-    }); // stroing the completed exercise in the history with date and state
+    }); // stroing the completed exercise in the firestore database
 
     this.runningExercise = null;
     this.exerciseChanged.next(null);
@@ -99,5 +113,13 @@ export class ExerciseService {
 
   getExercisesHistoryList() {
     return this.exercisesHistoryList.slice();
+  }
+
+  private addDataToDatabase(exercise: Exercise) {
+    const data = JSON.parse(JSON.stringify(exercise));
+    this.db.collection("finishedExercises").add(exercise);
+
+    //finishedExercises collection will store all the finished and completed data.
+    //add() returns a promise where we can handle the success case and we can catch any errors too.
   }
 }
