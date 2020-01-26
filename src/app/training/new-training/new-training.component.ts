@@ -64,10 +64,12 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
     //   console.log(result); // result is the an array objects which exacly like the exercise model
     // });
 
+    console.log("Inside the new training component init");
+    this.exerciseService.fetchAvailableExercise();
+
     this.exerciseSubscription = this.exerciseService.exercisesChanged.subscribe(
       exercises => (this.exercises = exercises)
     );
-    this.exerciseService.fetchAvailableExercise();
   }
 
   onStartTraining(form: NgForm) {

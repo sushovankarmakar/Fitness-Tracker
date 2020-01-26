@@ -13,6 +13,9 @@ export class ExerciseService {
 
   exercisesChanged = new Subject<Exercise[]>();
 
+  // this finishedExercisesChanged event will be emitted when finished list is changed or update.
+  finishedExercisesChanged = new Subject<Exercise[]>();
+
   // private availableExercises: Exercise[] = [
   //   { id: "crunches", name: "Crunches", duration: 30, calories: 8 },
   //   { id: "touch-toes", name: "Touch Toes", duration: 180, calories: 15 },
@@ -22,8 +25,6 @@ export class ExerciseService {
   private availableExercises: Exercise[] = [];
 
   private runningExercise: Exercise;
-
-  private exercisesHistoryList: Exercise[] = []; //storing all completed or canceled exercises
 
   // getAvailableExercise() {
   //   // slice method will create a real copy of the array and return it.
@@ -50,7 +51,7 @@ export class ExerciseService {
       // even though we reloaded the new-training-component and therefore re-executed the
       // fetchAvailableExercise() method we only get one log. So this subscription replaces itself.
       .subscribe((exercises: Exercise[]) => {
-        console.log(exercises);
+        //console.log(exercises);
         this.availableExercises = exercises;
         this.exercisesChanged.next([...this.availableExercises]);
       });
@@ -74,14 +75,14 @@ export class ExerciseService {
 
     this.addDataToDatabase({
       ...this.runningExercise,
-      date: new Date(),
+      date: new Date().toLocaleString(),
       state: "completed"
     }); // stroing the completed exercise in the firestore database
 
     this.runningExercise = null;
     this.exerciseChanged.next(null); // this means we got no running exercise.
 
-    console.log(this.exercisesHistoryList);
+    //console.log(this.finishedExercisesHistoryList);
   }
 
   cancelExercise(progress: number) {
@@ -97,27 +98,41 @@ export class ExerciseService {
       ...this.runningExercise,
       duration: this.runningExercise.duration * (progress / 100),
       calories: this.runningExercise.calories * (progress / 100),
-      date: new Date(),
+      date: new Date().toLocaleString(),
       state: "cancelled"
     }); // stroing the completed exercise in the firestore database
 
     this.runningExercise = null;
     this.exerciseChanged.next(null);
 
-    console.log(this.exercisesHistoryList);
+    //console.log(this.finishedExercisesHistoryList);
   }
 
   getRunningExercise() {
     return { ...this.runningExercise };
   }
 
-  getExercisesHistoryList() {
-    return this.exercisesHistoryList.slice();
+  // getExercisesHistoryList() {
+  //   return this.finishedExercisesHistoryList.slice();
+  // }
+
+  fetchExercisesHistoryList() {
+    this.db
+      .collection("finishedExercises")
+      .valueChanges()
+      .subscribe((exercises: Exercise[]) => {
+        // here we are emitting a value whenever we get finishedExercisesHistoryList from the server
+        this.finishedExercisesChanged.next(exercises);
+      });
+    console.log("Inside the fetch");
+
+    // valueChanges() returns the array of document values without the id of the document.
+    //private finishedExercisesHistoryList: Exercise[] = []; //storing all completed or canceled exercises
   }
 
   private addDataToDatabase(exercise: Exercise) {
     const data = JSON.parse(JSON.stringify(exercise));
-    this.db.collection("finishedExercises").add(exercise);
+    this.db.collection("finishedExercises").add(data);
 
     //finishedExercises collection will store all the finished and completed data.
     //add() returns a promise where we can handle the success case and we can catch any errors too.

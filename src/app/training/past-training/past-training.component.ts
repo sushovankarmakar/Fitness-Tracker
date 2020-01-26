@@ -1,18 +1,27 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+  OnDestroy
+} from "@angular/core";
 import { MatTableDataSource, MatSort, MatPaginator } from "@angular/material";
 import { Exercise } from "../exercise.model";
 import { ExerciseService } from "../exercise.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-past-training",
   templateUrl: "./past-training.component.html",
   styleUrls: ["./past-training.component.css"]
 })
-export class PastTrainingComponent implements OnInit, AfterViewInit {
+export class PastTrainingComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns = ["date", "name", "calories", "duration", "state"];
   dataSource = new MatTableDataSource<Exercise>(); // exercise is a kind of type which we have to pass
 
   // MatTableDataSource is an object which allows material table to connect
+
+  private exchangedSubscription: Subscription;
 
   // ViewChild gives us a way of getting access to find elements in our template in the typescript file.
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -21,7 +30,17 @@ export class PastTrainingComponent implements OnInit, AfterViewInit {
   constructor(private exerciseService: ExerciseService) {}
 
   ngOnInit() {
-    this.dataSource.data = this.exerciseService.getExercisesHistoryList();
+    //this.dataSource.data = this.exerciseService.getExercisesHistoryList();
+
+    console.log("Going to fetch");
+    this.exerciseService.fetchExercisesHistoryList();
+
+    this.exchangedSubscription = this.exerciseService.finishedExercisesChanged.subscribe(
+      (exercises: Exercise[]) => {
+        this.dataSource.data = exercises;
+        console.log("Fetch");
+      }
+    );
   }
 
   // ngAfterViewInit method is executed once the view done rendering and initializing
@@ -31,6 +50,10 @@ export class PastTrainingComponent implements OnInit, AfterViewInit {
 
     // MatTableModule doesn't include sorting, pagenation and filtering mechanism.
     // We have to add these seperate modules.
+  }
+
+  ngOnDestroy() {
+    this.exchangedSubscription.unsubscribe();
   }
 
   doFilter(filterValue: string) {
