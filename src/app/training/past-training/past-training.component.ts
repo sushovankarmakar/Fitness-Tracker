@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { MatTableDataSource, MatSort, MatPaginator } from "@angular/material";
-import { Excercise } from "../excercise.model";
-import { ExcerciseService } from "../excercise.service";
+import { Exercise } from "../exercise.model";
+import { ExerciseService } from "../exercise.service";
 
 @Component({
   selector: "app-past-training",
@@ -10,7 +10,7 @@ import { ExcerciseService } from "../excercise.service";
 })
 export class PastTrainingComponent implements OnInit, AfterViewInit {
   displayedColumns = ["date", "name", "calories", "duration", "state"];
-  dataSource = new MatTableDataSource<Excercise>(); // excercise is a kind of type which we have to pass
+  dataSource = new MatTableDataSource<Exercise>(); // exercise is a kind of type which we have to pass
 
   // MatTableDataSource is an object which allows material table to connect
 
@@ -18,10 +18,10 @@ export class PastTrainingComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-  constructor(private excerciseService: ExcerciseService) {}
+  constructor(private exerciseService: ExerciseService) {}
 
   ngOnInit() {
-    this.dataSource.data = this.excerciseService.getExcercisesHistoryList();
+    this.dataSource.data = this.exerciseService.getExercisesHistoryList();
   }
 
   // ngAfterViewInit method is executed once the view done rendering and initializing

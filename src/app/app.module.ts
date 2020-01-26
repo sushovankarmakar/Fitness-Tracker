@@ -20,7 +20,7 @@ import { HeaderComponent } from "./navigation/header/header.component";
 import { SidenavListComponent } from "./navigation/sidenav-list/sidenav-list.component";
 import { StopTrainingComponent } from "./training/current-training/stop-training.component";
 import { AuthService } from "./auth/auth.service";
-import { ExcerciseService } from "./training/excercise.service";
+import { ExerciseService } from "./training/exercise.service";
 import { environment } from "../environments/environment";
 
 @NgModule({
@@ -48,7 +48,7 @@ import { environment } from "../environments/environment";
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule
   ],
-  providers: [AuthService, ExcerciseService],
+  providers: [AuthService, ExerciseService],
   bootstrap: [AppComponent],
   entryComponents: [StopTrainingComponent]
 })

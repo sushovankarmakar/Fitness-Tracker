@@ -1,6 +1,6 @@
-//defining here, how excercise should look like
+//defining here, how exercise should look like
 
-export interface Excercise {
+export interface Exercise {
   id: string;
   name: string;
   duration: number;

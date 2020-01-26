@@ -5,8 +5,8 @@ import {
   Output,
   OnDestroy
 } from "@angular/core";
-import { ExcerciseService } from "../excercise.service";
-import { Excercise } from "../excercise.model";
+import { ExerciseService } from "../exercise.service";
+import { Exercise } from "../exercise.model";
 import { NgForm } from "@angular/forms";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { Observable, Subscription } from "rxjs";
@@ -19,28 +19,28 @@ import { map } from "rxjs/operators";
 })
 export class NewTrainingComponent implements OnInit, OnDestroy {
   //@Output() trainingStart = new EventEmitter<void>();
-  excercises: Excercise[] = [];
+  exercises: Exercise[] = [];
 
-  //excercises: Observable<any>;
-  excerciseSubscription: Subscription;
+  //exercises: Observable<any>;
+  exerciseSubscription: Subscription;
 
   constructor(
-    private excerciseService: ExcerciseService,
+    private exerciseService: ExerciseService,
     private db: AngularFirestore
   ) {}
 
   ngOnInit() {
-    //this.excercises = this.excerciseService.getAvailableExcercise();
+    //this.exercises = this.exerciseService.getAvailableExercise();
     this.db
-      .collection("availableExcercises")
+      .collection("availableExercises")
       .valueChanges()
       .subscribe(result => {
         console.log(result);
       });
 
-    //this.excercises = this.db.collection("availableExcercises").valueChanges();
+    //this.exercises = this.db.collection("availableExercises").valueChanges();
     this.db
-      .collection("availableExcercises")
+      .collection("availableExercises")
       .snapshotChanges()
       .subscribe(result => {
         console.log(result);
@@ -48,7 +48,7 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
     //document snapshot is a way to get the metadata, the id.
 
     // this.db
-    //   .collection("availableExcercises")
+    //   .collection("availableExercises")
     //   .snapshotChanges()
     //   .subscribe(result => {
     //     for (const res of result) {
@@ -57,25 +57,25 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
     //     }
     //   });
 
-    // here code is removed to the fetchAvailableExcercise() method of excercise.service.ts file.
+    // here code is removed to the fetchAvailableExercise() method of exercise.service.ts file.
 
     //snapshotChanges() gives us the obserables on which we can use map() operator.
     // .subscribe(result => {
-    //   console.log(result); // result is the an array objects which exacly like the excercise model
+    //   console.log(result); // result is the an array objects which exacly like the exercise model
     // });
 
-    this.excerciseSubscription = this.excerciseService.excercisesChanged.subscribe(
-      excercises => (this.excercises = excercises)
+    this.exerciseSubscription = this.exerciseService.exercisesChanged.subscribe(
+      exercises => (this.exercises = exercises)
     );
-    this.excerciseService.fetchAvailableExcercise();
+    this.exerciseService.fetchAvailableExercise();
   }
 
   onStartTraining(form: NgForm) {
     //this.trainingStart.emit();
-    this.excerciseService.startExcercise(form.value.excercise);
+    this.exerciseService.startExercise(form.value.exercise);
   }
 
   ngOnDestroy() {
-    this.excerciseSubscription.unsubscribe();
+    this.exerciseSubscription.unsubscribe();
   }
 }
