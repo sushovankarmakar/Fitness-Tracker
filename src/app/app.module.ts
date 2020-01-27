@@ -52,6 +52,8 @@ import { TrainingModule } from "./training/training.module";
     BrowserAnimationsModule,
     MaterialModule,
     FlexLayoutModule,
+
+    // AngularFireModule should be in this file cause it initialize the angular fire
     AngularFireModule.initializeApp(environment.firebase),
     //AngularFirestoreModule,
     //AngularFireAuthModule,
