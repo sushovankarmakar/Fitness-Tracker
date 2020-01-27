@@ -5,6 +5,7 @@ import { AngularFirestore } from "@angular/fire/firestore";
 import { map } from "rxjs/operators";
 import { AuthService } from "../auth/auth.service";
 import { Subscription } from "rxjs";
+import { UIService } from "../shared/ui.service";
 
 // this service where we manage all the exercies we know
 // as well as our completed and canceled exercies
@@ -34,9 +35,11 @@ export class ExerciseService {
   //   return this.availableExercises.slice();
   // }
 
-  constructor(private db: AngularFirestore) {}
+  constructor(private db: AngularFirestore, private uiService: UIService) {}
 
   fetchAvailableExercise() {
+    this.uiService.loadingStateChanged.next(true);
+
     this.firebaseSubscriptionsList.push(
       // pushing the below subscription into firebaseSubscription array.
       this.db
@@ -58,6 +61,8 @@ export class ExerciseService {
         .subscribe(
           (exercises: Exercise[]) => {
             //console.log(exercises);
+            this.uiService.loadingStateChanged.next(false);
+
             this.availableExercises = exercises;
             this.exercisesChanged.next([...this.availableExercises]);
           }

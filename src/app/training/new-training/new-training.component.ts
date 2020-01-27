@@ -1,8 +1,8 @@
 import {
   Component,
   OnInit,
-  EventEmitter,
-  Output,
+  //EventEmitter,
+  //Output,
   OnDestroy
 } from "@angular/core";
 import { ExerciseService } from "../exercise.service";
@@ -10,8 +10,9 @@ import { Exercise } from "../exercise.model";
 import { NgForm } from "@angular/forms";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { Observable, Subscription } from "rxjs";
-import { map } from "rxjs/operators";
-import { AuthService } from "src/app/auth/auth.service";
+//import { map } from "rxjs/operators";
+//import { AuthService } from "src/app/auth/auth.service";
+import { UIService } from "src/app/shared/ui.service";
 
 @Component({
   selector: "app-new-training",
@@ -23,11 +24,15 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
   exercises: Exercise[] = [];
 
   //exercises: Observable<any>;
-  exerciseSubscription: Subscription;
+  private exerciseSubscription: Subscription;
+  private loadingSubscription: Subscription;
+
+  isLoading = true;
 
   constructor(
     private exerciseService: ExerciseService,
-    private db: AngularFirestore //,private authService: AuthService
+    private db: AngularFirestore, //,private authService: AuthService
+    private uiService: UIService
   ) {
     // this.authService.authChange.subscribe((isAuthenticated: boolean) => {
     //   if (!isAuthenticated) {
@@ -74,8 +79,17 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
     console.log("Inside the new training component init");
     this.exerciseService.fetchAvailableExercise();
 
+    this.loadingSubscription = this.uiService.loadingStateChanged.subscribe(
+      (isLoading: boolean) => {
+        this.isLoading = isLoading; //availableExcercisesList loading is completed, stop showing the mat-spinner
+      }
+    );
+
     this.exerciseSubscription = this.exerciseService.exercisesChanged.subscribe(
-      exercises => (this.exercises = exercises)
+      exercises => {
+        //this.isLoading = false; // availableExcercisesList loading is completed, stop showing the mat-spinner
+        this.exercises = exercises;
+      }
     );
   }
 
@@ -86,5 +100,6 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.exerciseSubscription.unsubscribe();
+    this.loadingSubscription.unsubscribe();
   }
 }
