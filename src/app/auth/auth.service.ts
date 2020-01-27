@@ -10,6 +10,7 @@ import { AngularFireAuth } from "@angular/fire/auth";
 import { error } from "util";
 import { auth } from "firebase";
 import { ExerciseService } from "../training/exercise.service";
+import { MatSnackBar } from "@angular/material";
 
 // this auth service is put in the provider array in app.module.ts
 // inject the auth service into the singup component.
@@ -27,7 +28,8 @@ export class AuthService {
   constructor(
     private router: Router,
     private angularFireAuth: AngularFireAuth,
-    private exerciseService: ExerciseService
+    private exerciseService: ExerciseService,
+    private snackBar: MatSnackBar
   ) {}
 
   //below two method will send different request to server
@@ -43,7 +45,11 @@ export class AuthService {
         //this.authSuccessfully();
       })
       .catch(error => {
-        console.log(error);
+        //console.log(error);
+        this.snackBar.open(error.message, null, {
+          // the action part is null
+          duration: 3000
+        });
       });
 
     // createUserWithEmailAndPassword() returns a promise on
@@ -63,7 +69,11 @@ export class AuthService {
         //this.authSuccessfully();
       })
       .catch(error => {
-        console.log(error);
+        //console.log(error);
+        this.snackBar.open(error.message, null, {
+          // the action part is null
+          duration: 3000
+        });
       });
   }
 
