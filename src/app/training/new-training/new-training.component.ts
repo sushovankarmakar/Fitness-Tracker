@@ -77,7 +77,6 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
     // });
 
     console.log("Inside the new training component init");
-    this.exerciseService.fetchAvailableExercise();
 
     this.loadingSubscription = this.uiService.loadingStateChanged.subscribe(
       (isLoading: boolean) => {
@@ -91,6 +90,13 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
         this.exercises = exercises;
       }
     );
+    this.fetchExercises();
+  }
+
+  fetchExercises() {
+    this.exerciseService.fetchAvailableExercise();
+
+    //this fetchExercises also getting called when "fetch again" button is pressed.
   }
 
   onStartTraining(form: NgForm) {

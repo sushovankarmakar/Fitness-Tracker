@@ -54,6 +54,7 @@ export class ExerciseService {
                 ...(doc.payload.doc.data() as {})
               };
             });
+            //throw new Error();  // this line was written to test the error part of this fetching method
           })
         )
         // even though we reloaded the new-training-component and therefore re-executed the
@@ -65,10 +66,21 @@ export class ExerciseService {
 
             this.availableExercises = exercises;
             this.exercisesChanged.next([...this.availableExercises]);
+
+            // this exercisesChanged event emits when we successfully fetched the availableExercises
+          },
+          error => {
+            // error happens when we can't fetch the availableExercisesList from the firestore
+            this.uiService.loadingStateChanged.next(false);
+            console.log(error);
+            this.uiService.showSnackbar(
+              "Fetching exercises failed, please try again later",
+              null,
+              3000
+            );
+            this.exercisesChanged.next(null);
+            // fetching the availableExercises has failed, so sending the null.
           }
-          //, error => {
-          //   //console.log(error);
-          // }
         )
     );
   }

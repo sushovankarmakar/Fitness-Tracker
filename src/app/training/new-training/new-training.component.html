@@ -7,7 +7,9 @@
       <mat-card-content fxLayoutAlign="center">
         <!--availableExcercisesList loading is completed, stop showing the mat-spinner, 
           show mat-form-field and the start button -->
-        <mat-form-field *ngIf="!isLoading">
+        <!-- if exercises array is not null (null when fetching availableExcercisesList is failed), 
+          show mat-form-field and the start button  -->
+        <mat-form-field *ngIf="!isLoading && exercises">
           <mat-select
             placeholder="Choose exercise"
             ngModel
@@ -34,17 +36,29 @@
         </mat-form-field>
         <mat-spinner *ngIf="isLoading"></mat-spinner>
       </mat-card-content>
-      <mat-card-actions fxLayoutAlign="center">
+      <mat-card-actions fxLayoutAlign="center" *ngIf="!isLoading">
         <!-- <button type="submit" mat-raised-button (click)="onStartTraining()">
           Start
         </button> -->
         <button
-          *ngIf="!isLoading"
+          *ngIf="exercises"
           type="submit"
           mat-raised-button
           [disabled]="f.invalid"
         >
           Start
+        </button>
+        <!-- 
+        show the start button if exercises array have availableExcercisesList
+        show the fetch again button if if exercises array don't have availableExcercisesList i.e null. -->
+        <button
+          *ngIf="!exercises"
+          type="button"
+          mat-raised-button
+          color="warn"
+          (click)="fetchExercises()"
+        >
+          Fetch Again
         </button>
       </mat-card-actions>
     </mat-card>
