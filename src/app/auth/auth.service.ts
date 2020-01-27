@@ -30,7 +30,7 @@ export class AuthService {
     private router: Router,
     private angularFireAuth: AngularFireAuth,
     private exerciseService: ExerciseService,
-    private snackBar: MatSnackBar,
+    //private snackBar: MatSnackBar,
     private uiService: UIService
   ) {}
 
@@ -56,10 +56,13 @@ export class AuthService {
         //console.log(error);
 
         this.uiService.loadingStateChanged.next(false); // loading done
-        this.snackBar.open(error.message, null, {
-          // the action part is null
-          duration: 3000
-        });
+
+        // this.snackBar.open(error.message, null, {
+        //   // the action part is null
+        //   duration: 3000
+        // });
+
+        this.uiService.showSnackbar(error.message, null, 3000);
       });
 
     // createUserWithEmailAndPassword() returns a promise on
@@ -85,10 +88,13 @@ export class AuthService {
       .catch(error => {
         //console.log(error);
         this.uiService.loadingStateChanged.next(false); // loading done
-        this.snackBar.open(error.message, null, {
-          // the action part is null
-          duration: 3000
-        });
+
+        // this.snackBar.open(error.message, null, {
+        //   // the action part is null
+        //   duration: 3000
+        // });
+
+        this.uiService.showSnackbar(error.message, null, 3000);
       });
   }
 
