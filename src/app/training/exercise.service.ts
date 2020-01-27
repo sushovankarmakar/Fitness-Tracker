@@ -3,6 +3,8 @@ import { Subject } from "rxjs/Subject";
 import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { map } from "rxjs/operators";
+import { AuthService } from "../auth/auth.service";
+import { Subscription } from "rxjs";
 
 // this service where we manage all the exercies we know
 // as well as our completed and canceled exercies
@@ -25,6 +27,7 @@ export class ExerciseService {
   private availableExercises: Exercise[] = [];
 
   private runningExercise: Exercise;
+  private firebaseSubscriptionsList: Subscription[] = [];
 
   // getAvailableExercise() {
   //   // slice method will create a real copy of the array and return it.
@@ -34,27 +37,35 @@ export class ExerciseService {
   constructor(private db: AngularFirestore) {}
 
   fetchAvailableExercise() {
-    this.db
-      .collection("availableExercises")
-      .snapshotChanges()
-      .pipe(
-        map(docArray => {
-          //docArray is an array of object on which we are applying the javascript map operator
-          return docArray.map(doc => {
-            return {
-              id: doc.payload.doc.id,
-              ...(doc.payload.doc.data() as {})
-            };
-          });
-        })
-      )
-      // even though we reloaded the new-training-component and therefore re-executed the
-      // fetchAvailableExercise() method we only get one log. So this subscription replaces itself.
-      .subscribe((exercises: Exercise[]) => {
-        //console.log(exercises);
-        this.availableExercises = exercises;
-        this.exercisesChanged.next([...this.availableExercises]);
-      });
+    this.firebaseSubscriptionsList.push(
+      // pushing the below subscription into firebaseSubscription array.
+      this.db
+        .collection("availableExercises")
+        .snapshotChanges()
+        .pipe(
+          map(docArray => {
+            //docArray is an array of object on which we are applying the javascript map operator
+            return docArray.map(doc => {
+              return {
+                id: doc.payload.doc.id,
+                ...(doc.payload.doc.data() as {})
+              };
+            });
+          })
+        )
+        // even though we reloaded the new-training-component and therefore re-executed the
+        // fetchAvailableExercise() method we only get one log. So this subscription replaces itself.
+        .subscribe(
+          (exercises: Exercise[]) => {
+            //console.log(exercises);
+            this.availableExercises = exercises;
+            this.exercisesChanged.next([...this.availableExercises]);
+          }
+          //, error => {
+          //   //console.log(error);
+          // }
+        )
+    );
   }
 
   startExercise(selectedId: string) {
@@ -121,17 +132,35 @@ export class ExerciseService {
   // }
 
   fetchExercisesHistoryList() {
-    this.db
-      .collection("finishedExercises")
-      .valueChanges()
-      .subscribe((exercises: Exercise[]) => {
-        // here we are emitting a value whenever we get finishedExercisesHistoryList from the server
-        this.finishedExercisesChanged.next(exercises);
-      });
+    this.firebaseSubscriptionsList.push(
+      // pushing the below subscription into firebaseSubscription array.
+      this.db
+        .collection("finishedExercises")
+        .valueChanges()
+        .subscribe(
+          (exercises: Exercise[]) => {
+            // here we are emitting a value whenever we get finishedExercisesHistoryList from the server
+            this.finishedExercisesChanged.next(exercises);
+          }
+          //, error => {
+          //   //console.log(error);
+          // }
+        )
+    );
+
     console.log("Inside the fetch");
 
     // valueChanges() returns the array of document values without the id of the document.
     //private finishedExercisesHistoryList: Exercise[] = []; //storing all completed or canceled exercises
+  }
+
+  cancelFirebaseSubscriptions() {
+    console.log(this.firebaseSubscriptionsList);
+    console.log("------------");
+    this.firebaseSubscriptionsList.forEach(
+      subscription => subscription.unsubscribe(),
+      console.log("---------- CANCEL --------")
+    );
   }
 
   private addDataToDatabase(exercise: Exercise) {

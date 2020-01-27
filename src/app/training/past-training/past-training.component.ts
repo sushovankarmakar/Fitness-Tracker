@@ -9,6 +9,7 @@ import { MatTableDataSource, MatSort, MatPaginator } from "@angular/material";
 import { Exercise } from "../exercise.model";
 import { ExerciseService } from "../exercise.service";
 import { Subscription } from "rxjs";
+import { AuthService } from "src/app/auth/auth.service";
 
 @Component({
   selector: "app-past-training",
@@ -21,13 +22,21 @@ export class PastTrainingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // MatTableDataSource is an object which allows material table to connect
 
-  private exchangedSubscription: Subscription;
+  private finishedExercisesSubscription: Subscription;
 
   // ViewChild gives us a way of getting access to find elements in our template in the typescript file.
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-  constructor(private exerciseService: ExerciseService) {}
+  constructor(
+    private exerciseService: ExerciseService //,private authService: AuthService
+  ) {
+    // this.authService.authChange.subscribe((isAuthenticated: boolean) => {
+    //   if (!isAuthenticated) {
+    //     this.finishedExercisesSubscription.unsubscribe();
+    //   }
+    // });
+  }
 
   ngOnInit() {
     //this.dataSource.data = this.exerciseService.getExercisesHistoryList();
@@ -35,7 +44,7 @@ export class PastTrainingComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log("Going to fetch");
     this.exerciseService.fetchExercisesHistoryList();
 
-    this.exchangedSubscription = this.exerciseService.finishedExercisesChanged.subscribe(
+    this.finishedExercisesSubscription = this.exerciseService.finishedExercisesChanged.subscribe(
       (exercises: Exercise[]) => {
         this.dataSource.data = exercises;
         console.log("Fetch");
@@ -53,7 +62,7 @@ export class PastTrainingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.exchangedSubscription.unsubscribe();
+    this.finishedExercisesSubscription.unsubscribe();
   }
 
   doFilter(filterValue: string) {

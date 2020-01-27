@@ -11,6 +11,7 @@ import { NgForm } from "@angular/forms";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { Observable, Subscription } from "rxjs";
 import { map } from "rxjs/operators";
+import { AuthService } from "src/app/auth/auth.service";
 
 @Component({
   selector: "app-new-training",
@@ -26,8 +27,14 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
 
   constructor(
     private exerciseService: ExerciseService,
-    private db: AngularFirestore
-  ) {}
+    private db: AngularFirestore //,private authService: AuthService
+  ) {
+    // this.authService.authChange.subscribe((isAuthenticated: boolean) => {
+    //   if (!isAuthenticated) {
+    //     this.exerciseSubscription.unsubscribe();
+    //   }
+    // });
+  }
 
   ngOnInit() {
     //this.exercises = this.exerciseService.getAvailableExercise();
