@@ -10,8 +10,8 @@ import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { MaterialModule } from "./material.module";
-import { SignupComponent } from "./auth/signup/signup.component";
-import { LoginComponent } from "./auth/login/login.component";
+// import { SignupComponent } from "./auth/signup/signup.component";
+// import { LoginComponent } from "./auth/login/login.component";
 import { TrainingComponent } from "./training/training.component";
 import { CurrentTrainingComponent } from "./training/current-training/current-training.component";
 import { NewTrainingComponent } from "./training/new-training/new-training.component";
@@ -24,12 +24,13 @@ import { AuthService } from "./auth/auth.service";
 import { ExerciseService } from "./training/exercise.service";
 import { environment } from "../environments/environment";
 import { UIService } from "./shared/ui.service";
+import { AuthModule } from "./auth/auth.module";
 
 @NgModule({
   declarations: [
     AppComponent,
-    SignupComponent,
-    LoginComponent,
+    // SignupComponent,
+    // LoginComponent,
     TrainingComponent,
     CurrentTrainingComponent,
     NewTrainingComponent,
@@ -49,9 +50,13 @@ import { UIService } from "./shared/ui.service";
     FlexLayoutModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    AuthModule // each module works standalone
   ],
   providers: [AuthService, ExerciseService, UIService],
+  // we should always provide our services to the app.module.ts if we plan to use them application wide
+  // or if we want to use them as singleton.
+
   bootstrap: [AppComponent],
   entryComponents: [StopTrainingComponent]
 })
