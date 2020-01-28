@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { AngularFireModule } from "@angular/fire";
-//import { AngularFirestoreModule } from "@angular/fire/firestore";
+import { AngularFirestoreModule } from "@angular/fire/firestore";
 //import { AngularFireAuthModule } from "@angular/fire/auth";
 
 import { AppRoutingModule } from "./app-routing.module";
@@ -28,7 +28,7 @@ import { ExerciseService } from "./training/exercise.service";
 import { environment } from "../environments/environment";
 import { UIService } from "./shared/ui.service";
 import { AuthModule } from "./auth/auth.module";
-import { TrainingModule } from "./training/training.module";
+//import { TrainingModule } from "./training/training.module";  // removed due to lazy loading
 
 @NgModule({
   declarations: [
@@ -55,10 +55,10 @@ import { TrainingModule } from "./training/training.module";
 
     // AngularFireModule should be in this file cause it initialize the angular fire
     AngularFireModule.initializeApp(environment.firebase),
-    //AngularFirestoreModule,
+    AngularFirestoreModule,
     //AngularFireAuthModule,
-    AuthModule, // each module works standalone
-    TrainingModule
+    AuthModule // each module works standalone
+    //TrainingModule  // removed due to lazy loading
   ],
   providers: [AuthService, ExerciseService, UIService],
   // we should always provide our services to the app.module.ts if we plan to use them application wide
