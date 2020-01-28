@@ -18,7 +18,8 @@ const routes: Routes = [
   // here we are lazy loading the TrainingModule
   {
     path: "training",
-    loadChildren: "./training/training.module#TrainingModule"
+    loadChildren: "./training/training.module#TrainingModule",
+    canLoad: [AuthGuard]
   } // loadChildren is the keyword for lazy loading
 ];
 
