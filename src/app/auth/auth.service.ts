@@ -13,7 +13,9 @@ import { ExerciseService } from "../training/exercise.service";
 import { MatSnackBar } from "@angular/material";
 import { UIService } from "../shared/ui.service";
 import { Store } from "@ngrx/store";
-import * as fromApp from "../app.reducer";
+//import * as fromApp from "../app.reducer";
+import * as fromRoot from "../app.reducer";
+import * as UI from "../shared/ui.actions";
 
 // this auth service is put in the provider array in app.module.ts
 // inject the auth service into the singup component.
@@ -34,7 +36,9 @@ export class AuthService {
     private exerciseService: ExerciseService,
     //private snackBar: MatSnackBar,
     private uiService: UIService,
-    private store: Store<{ ui: fromApp.State }> // injecting the Store in the auth.service
+
+    //private store: Store<{ ui: fromApp.State }> // injecting the Store in the auth.service
+    private store: Store<fromRoot.State>
   ) {}
 
   //below two method will send different request to server
@@ -47,7 +51,8 @@ export class AuthService {
     // we've submitted the request and loading has started, so don't show the register button
     // this.uiService.loadingStateChanged.next(true);
 
-    this.store.dispatch({ type: "START_LOADING" }); //dispatching an action which will listen by the dispatcher
+    //this.store.dispatch({ type: "START_LOADING" }); //dispatching an action which will listen by the dispatcher
+    this.store.dispatch(new UI.StartLoading());
 
     this.angularFireAuth.auth
       .createUserWithEmailAndPassword(authData.email, authData.password)
@@ -56,13 +61,17 @@ export class AuthService {
         //this.authSuccessfully();
 
         //this.uiService.loadingStateChanged.next(false); // loading done, now show the button
-        this.store.dispatch({ type: "STOP_LOADING" });
+
+        //this.store.dispatch({ type: "STOP_LOADING" });
+        this.store.dispatch(new UI.StopLoading());
       })
       .catch(error => {
         //console.log(error);
 
         //this.uiService.loadingStateChanged.next(false); // loading done
-        this.store.dispatch({ type: "STOP_LOADING" });
+
+        //this.store.dispatch({ type: "STOP_LOADING" });
+        this.store.dispatch(new UI.StopLoading());
 
         // this.snackBar.open(error.message, null, {
         //   // the action part is null
@@ -85,7 +94,8 @@ export class AuthService {
     // we've submitted the request and loading has started, so don't show the login button
     // this.uiService.loadingStateChanged.next(true);
 
-    this.store.dispatch({ type: "START_LOADING" });
+    //this.store.dispatch({ type: "START_LOADING" });
+    this.store.dispatch(new UI.StartLoading());
 
     this.angularFireAuth.auth
       .signInWithEmailAndPassword(authData.email, authData.password)
@@ -94,13 +104,15 @@ export class AuthService {
         //this.authSuccessfully();
         //this.uiService.loadingStateChanged.next(false); // loading done
 
-        this.store.dispatch({ type: "STOP_LOADING" });
+        //this.store.dispatch({ type: "STOP_LOADING" });
+        this.store.dispatch(new UI.StopLoading());
       })
       .catch(error => {
         //console.log(error);
         //this.uiService.loadingStateChanged.next(false); // loading done
 
-        this.store.dispatch({ type: "STOP_LOADING" });
+        //this.store.dispatch({ type: "STOP_LOADING" });
+        this.store.dispatch(new UI.StopLoading());
 
         // this.snackBar.open(error.message, null, {
         //   // the action part is null

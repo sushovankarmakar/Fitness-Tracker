@@ -1,24 +1,20 @@
+import {
+  ActionReducerMap,
+  createFeatureSelector,
+  createSelector
+} from "@ngrx/store";
+import * as fromUi from "./shared/ui.reducer";
+
 export interface State {
-  isLoading: boolean;
+  ui: fromUi.State;
 }
 
-const initialState: State = {
-  isLoading: false
+// grouping all the reducers
+export const reducers: ActionReducerMap<State> = {
+  ui: fromUi.uiReducer
 };
 
-// we dispatches actions to change the store, we don't do it directly
-//reducer takes old state and return a new state
-export function appReducer(state = initialState, action) {
-  switch (action.type) {
-    case "START_LOADING":
-      return {
-        isLoading: true
-      };
-    case "STOP_LOADING":
-      return {
-        isLoading: false
-      };
-    default:
-      return state;
-  }
-}
+// selectors are helper functions that helps us to pull information from our state.
+export const getUiState = createFeatureSelector<fromUi.State>("ui");
+
+export const getIsLoading = createSelector(getUiState, fromUi.getIsLoading);

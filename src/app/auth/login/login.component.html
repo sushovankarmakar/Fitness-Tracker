@@ -36,6 +36,7 @@
       Submit
     </button>
     <mat-spinner *ngIf="isLoading$ | async"></mat-spinner>
+    <!-- async pipe is required for NgRx -->
     <!-- <mat-spinner *ngIf="isLoading"></mat-spinner> -->
     <!-- if not loading, show the button else show the mat-spinner -->
   </form>

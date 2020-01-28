@@ -31,7 +31,8 @@ import { AuthModule } from "./auth/auth.module";
 //import { TrainingModule } from "./training/training.module";  // removed due to lazy loading
 
 import { StoreModule } from "@ngrx/store";
-import { appReducer } from "./app.reducer";
+//import { appReducer } from "./app.reducer";
+import { reducers } from "./app.reducer";
 
 @NgModule({
   declarations: [
@@ -63,9 +64,11 @@ import { appReducer } from "./app.reducer";
     AuthModule, // each module works standalone
     //TrainingModule  // removed due to lazy loading
 
-    StoreModule.forRoot({ ui: appReducer }) // adding and registering the Reducer
+    //StoreModule.forRoot({ ui: appReducer }) // adding and registering the Reducer
     // passing an object to which we can map multiple reducers against keys
     // which we can then access the state slices
+
+    StoreModule.forRoot(reducers)
   ],
   providers: [AuthService, ExerciseService, UIService],
   // we should always provide our services to the app.module.ts if we plan to use them application wide
