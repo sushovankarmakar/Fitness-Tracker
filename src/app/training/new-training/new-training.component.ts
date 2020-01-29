@@ -13,26 +13,31 @@ import { Observable, Subscription } from "rxjs";
 //import { map } from "rxjs/operators";
 //import { AuthService } from "src/app/auth/auth.service";
 import { UIService } from "src/app/shared/ui.service";
+import { Store } from "@ngrx/store";
+import * as fromRoot from "../../app.reducer";
 
 @Component({
   selector: "app-new-training",
   templateUrl: "./new-training.component.html",
   styleUrls: ["./new-training.component.css"]
 })
-export class NewTrainingComponent implements OnInit, OnDestroy {
+export class NewTrainingComponent implements OnInit {
   //@Output() trainingStart = new EventEmitter<void>();
   exercises: Exercise[] = [];
 
   //exercises: Observable<any>;
   private exerciseSubscription: Subscription;
-  private loadingSubscription: Subscription;
+  //private loadingSubscription: Subscription;
 
-  isLoading = true;
+  //isLoading = true;
+
+  isLoading$: Observable<boolean>;
 
   constructor(
     private exerciseService: ExerciseService,
     private db: AngularFirestore, //,private authService: AuthService
-    private uiService: UIService
+    private uiService: UIService,
+    private store: Store<fromRoot.State>
   ) {
     // this.authService.authChange.subscribe((isAuthenticated: boolean) => {
     //   if (!isAuthenticated) {
@@ -78,11 +83,13 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
 
     console.log("Inside the new training component init");
 
-    this.loadingSubscription = this.uiService.loadingStateChanged.subscribe(
-      (isLoading: boolean) => {
-        this.isLoading = isLoading; //availableExcercisesList loading is completed, stop showing the mat-spinner
-      }
-    );
+    // this.loadingSubscription = this.uiService.loadingStateChanged.subscribe(
+    //   (isLoading: boolean) => {
+    //     this.isLoading = isLoading; //availableExcercisesList loading is completed, stop showing the mat-spinner
+    //   }
+    // );
+
+    this.isLoading$ = this.store.select(fromRoot.getIsLoading);
 
     this.exerciseSubscription = this.exerciseService.exercisesChanged.subscribe(
       exercises => {
@@ -108,8 +115,8 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
     if (this.exerciseSubscription) {
       this.exerciseSubscription.unsubscribe();
     }
-    if (this.loadingSubscription) {
-      this.loadingSubscription.unsubscribe();
-    }
+    // if (this.loadingSubscription) {
+    //   this.loadingSubscription.unsubscribe();
+    // }
   }
 }

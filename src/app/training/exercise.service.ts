@@ -6,6 +6,9 @@ import { map } from "rxjs/operators";
 import { AuthService } from "../auth/auth.service";
 import { Subscription } from "rxjs";
 import { UIService } from "../shared/ui.service";
+import { Store } from "@ngrx/store";
+import * as UI from "../shared/ui.actions";
+import * as fromRoot from "../app.reducer";
 
 // this service where we manage all the exercies we know
 // as well as our completed and canceled exercies
@@ -35,10 +38,15 @@ export class ExerciseService {
   //   return this.availableExercises.slice();
   // }
 
-  constructor(private db: AngularFirestore, private uiService: UIService) {}
+  constructor(
+    private db: AngularFirestore,
+    private uiService: UIService,
+    private store: Store<fromRoot.State>
+  ) {}
 
   fetchAvailableExercise() {
-    this.uiService.loadingStateChanged.next(true);
+    //this.uiService.loadingStateChanged.next(true);
+    this.store.dispatch(new UI.StartLoading());
 
     this.firebaseSubscriptionsList.push(
       // pushing the below subscription into firebaseSubscription array.
@@ -62,7 +70,8 @@ export class ExerciseService {
         .subscribe(
           (exercises: Exercise[]) => {
             //console.log(exercises);
-            this.uiService.loadingStateChanged.next(false);
+            //this.uiService.loadingStateChanged.next(false);
+            this.store.dispatch(new UI.StopLoading());
 
             this.availableExercises = exercises;
             this.exercisesChanged.next([...this.availableExercises]);
@@ -71,7 +80,9 @@ export class ExerciseService {
           },
           error => {
             // error happens when we can't fetch the availableExercisesList from the firestore
-            this.uiService.loadingStateChanged.next(false);
+            //this.uiService.loadingStateChanged.next(false);
+            this.store.dispatch(new UI.StopLoading());
+
             console.log(error);
             this.uiService.showSnackbar(
               "Fetching exercises failed, please try again later",

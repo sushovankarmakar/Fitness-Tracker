@@ -9,7 +9,7 @@
           show mat-form-field and the start button -->
         <!-- if exercises array is not null (null when fetching availableExcercisesList is failed), 
           show mat-form-field and the start button  -->
-        <mat-form-field *ngIf="!isLoading && exercises">
+        <mat-form-field *ngIf="!(isLoading$ | async) && exercises">
           <mat-select
             placeholder="Choose exercise"
             ngModel
@@ -34,9 +34,9 @@
             </mat-option> -->
           </mat-select>
         </mat-form-field>
-        <mat-spinner *ngIf="isLoading"></mat-spinner>
+        <mat-spinner *ngIf="isLoading$ | async"></mat-spinner>
       </mat-card-content>
-      <mat-card-actions fxLayoutAlign="center" *ngIf="!isLoading">
+      <mat-card-actions fxLayoutAlign="center" *ngIf="!(isLoading | async)">
         <!-- <button type="submit" mat-raised-button (click)="onStartTraining()">
           Start
         </button> -->
